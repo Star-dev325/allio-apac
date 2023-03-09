@@ -1,7 +1,7 @@
 {
-  "name": "chrome-extension-boilerplate-react",
+  "name": "DOM Serializer/Parser",
   "version": "5.0.4",
-  "description": "A chrome extension boilerplate built with React 18, Webpack 5, and Webpack Dev Server 4",
+  "description": "DOM Serializer/Parser tool that extracts the DOM (Document Object Model) of the user’s current active web page and converts it into a string format.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -13,6 +13,10 @@
     "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/material": "^5.11.12",
+    "jquery": "^3.6.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

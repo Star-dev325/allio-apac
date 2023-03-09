@@ -39,6 +39,7 @@ var options = {
   mode: process.env.NODE_ENV || 'development',
   entry: {
     newtab: path.join(__dirname, 'src', 'pages', 'Newtab', 'index.jsx'),
+    dashboard: path.join(__dirname, 'src', 'pages', 'Dashboard', 'index.jsx'),
     options: path.join(__dirname, 'src', 'pages', 'Options', 'index.jsx'),
     popup: path.join(__dirname, 'src', 'pages', 'Popup', 'index.jsx'),
     background: path.join(__dirname, 'src', 'pages', 'Background', 'index.js'),
@@ -188,6 +189,12 @@ var options = {
       template: path.join(__dirname, 'src', 'pages', 'Newtab', 'index.html'),
       filename: 'newtab.html',
       chunks: ['newtab'],
+      cache: false,
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'src', 'pages', 'Dashboard', 'index.html'),
+      filename: 'dashboard.html',
+      chunks: ['dashboard'],
       cache: false,
     }),
     new HtmlWebpackPlugin({

@@ -48,8 +48,9 @@ const Popup = () => {
           </div>}
       </div>
       <div className='control-sector'>
-        <Button onClick={() => {
-          chrome.tabs.create({ url: chrome.runtime.getURL('dashboard.html'), active: true });
+        <Button onClick={async () => {
+          localStorage.setItem('DOM_Analyzer_html_resource', htmlSource);
+          await chrome.tabs.create({ url: chrome.runtime.getURL('dashboard.html') });
         }} color='info' disabled={!isSuccess}>Open in new tab</Button>
         <Button onClick={() => {
           setIsGlipseMode(true);

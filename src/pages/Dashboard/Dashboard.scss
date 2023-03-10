@@ -1,4 +1,5 @@
-$myColor: orange;
+$headerColor: #434343;
+$myDividerColor: lightgrey;
 
 h1,
 h2,
@@ -6,5 +7,54 @@ h3,
 h4,
 h5,
 h6 {
-  color: $myColor;
+  color: $headerColor;
+}
+
+.App {
+  height: 100%;
+  width: 100%;
+  padding: 20px;
+  padding-top: 65px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .main-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    .tab-container {
+      flex: 1;
+      border: 1px solid $myDividerColor;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-y: auto;
+    }
+  }
+}
+
+.flex-stretch {
+  flex: 1;
+}
+
+.list-row {
+  padding: 10px;
+}
+
+.text-tabs-container {
+  height: 100%;
+}
+
+.text-panel-container {
+  height: 100%;
+  flex: 1;
+  padding: 20px;
+  border-left: 1px solid $myDividerColor;
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: auto;
 }

@@ -1,28 +1,22 @@
 import $ from 'jquery';
 
-export const clarifyElementList = (source) => {
+export const clarifyElementList = async (source) => {
   let linkStack = [];
-  const elements = $(source)
-    .find('*')
-    .get()
-    .filter((element) => {
-      if (element.tagName === 'A') {
-        try {
-          let urlObj = new URL(element.getAttribute('href'));
-          if (linkStack.includes(element.getAttribute('href'))) return false;
-          chrome.tabs.query({ active: true }, tabs => {
-            const tabUrlObj = new URL(tabs[0].url);
-            if (tabUrlObj.hostname === urlObj.hostname && urlObj.hash) return false;
-            linkStack = [...linkStack, element.getAttribute('href')];
-            return true;
-          });
-          return true;
-        } catch (e) {
-          console.log('url error:', e.message);
-          return false;
-        }
+  let elements = $(source).find('*').get();
+  const tabs = await chrome.tabs.query({ active: true });
+  const tabUrlObj = new URL(tabs[0].url);
+  return elements.filter((element) => {
+    let flag = true;
+    if (element.tagName === 'A') {
+      try {
+        const urlObj = new URL(element.getAttribute('href'));
+        if (linkStack.includes(urlObj.href) || (tabUrlObj.hostname === urlObj.hostname && urlObj.hash)) flag = false;
+        else linkStack = [...linkStack, element.getAttribute('href')];
+      } catch (e) {
+        console.log(e.message, `url error with ${element.getAttribute('href')}`)
+        flag = false;
       }
-      else return true;
-    });
-  return elements;
+    }
+    return flag;
+  });
 };

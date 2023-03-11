@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import $ from 'jquery';
 
 import Greetings from '../../containers/Greetings/Greetings';
@@ -18,12 +20,12 @@ const Popup = () => {
   return (
     <div className="App">
       <Greetings />
-      <div className='info-sector'>
+      <Box className='info-sector'>
         {isGlipseMode ?
-          <div className='row-container'>
+          <Box className='row-container'>
             <Reports source={htmlSource} />
-          </div>
-          : <div className='row-container column'>
+          </Box>
+          : <Box className='row-container column'>
             <Button onClick={() => {
               setIsPending(true);
               chrome.tabs.query({ active: true }, tabs => {
@@ -42,12 +44,12 @@ const Popup = () => {
             }} variant='contained' disabled={isPending}>
               {isPending && <CircularProgress size={24} />} {isSuccess ? 'Parse again' : 'Parse this page'}
             </Button>
-            {isSuccess && <div className='row-container fill-space'>
-              <h2>{isSuccess ? 'Scraping HTML has been done successfully!' : 'Error ocurred'}</h2>
-            </div>}
-          </div>}
-      </div>
-      <div className='control-sector'>
+            {isSuccess && <Box className='row-container fill-space'>
+              <Typography component='h2'>{isSuccess ? 'Scraping HTML has been done successfully!' : 'Error ocurred'}</Typography>
+            </Box>}
+          </Box>}
+      </Box>
+      <Box className='control-sector'>
         <Button onClick={async () => {
           localStorage.setItem('DOM_Analyzer_html_resource', htmlSource);
           await chrome.tabs.create({ url: chrome.runtime.getURL('dashboard.html') });
@@ -55,7 +57,7 @@ const Popup = () => {
         <Button onClick={() => {
           setIsGlipseMode(true);
         }} color='info' disabled={!isSuccess}>glimpse</Button>
-      </div>
+      </Box>
     </div>
   );
 };

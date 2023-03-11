@@ -5,11 +5,13 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 import { clarifyElementList } from '../../../utils';
 import './Reports.scss';
 import { useEffect } from 'react';
-import { TableContainer } from '@mui/material';
+import TableContainer from '@mui/material/TableContainer';
 
 const Reports = ({ source }) => {
 
@@ -25,16 +27,19 @@ const Reports = ({ source }) => {
   }
 
   useEffect(() => {
-    const elements = clarifyElementList(source);
-    const elementsCounts = countElements(elements.map(element => element.tagName));
-    if (Object.keys(elementsCounts).includes('A')) {
-      setNumLinkPage(elementsCounts['A']);
-    } else setNumLinkPage(0);
-    setReportData(Object.keys(elementsCounts).map(key => ({ type: key, value: elementsCounts[key] })));
+    async function init() {
+      const elements = await clarifyElementList(source);
+      const elementsCounts = countElements(elements.map(element => element.tagName));
+      if (Object.keys(elementsCounts).includes('A')) {
+        setNumLinkPage(elementsCounts['A']);
+      } else setNumLinkPage(0);
+      setReportData(Object.keys(elementsCounts).map(key => ({ type: key, value: elementsCounts[key] })));
+    };
+    init();
   }, []);
 
   return (
-    <div className='main'>
+    <Box className='main'>
       {reportData &&
         <>
           <TableContainer component={Paper}>
@@ -53,10 +58,10 @@ const Reports = ({ source }) => {
               </TableBody>
             </Table>
           </TableContainer>
-          <h3>Found <span>{numLinkPage}</span> linked pages in this page.</h3>
+          <Typography component='h3' sx={{ textAlign: 'center' }}><span>{numLinkPage}</span> other pages linked to this page were discovered.</Typography>
         </>
       }
-    </div >
+    </Box >
   );
 };
 

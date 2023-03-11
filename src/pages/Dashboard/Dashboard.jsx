@@ -6,6 +6,7 @@ import Avatar from '@mui/material/Avatar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 import { clarifyElementList } from '../../utils';
 import './Dashboard.scss';
@@ -30,7 +31,7 @@ const Dashboard = () => {
 
     return (
       <>
-        <div className='text-tabs-container'>
+        <Box sx={{ height: '100%' }}>
           <Tabs
             sx={{
               height: '100%',
@@ -49,68 +50,112 @@ const Dashboard = () => {
               })
             }
           </Tabs>
-        </div>
-        <div className='text-panel-container'>
-          {elementStack[verticalTabValue] && elementStack[verticalTabValue].map((content, index) => {
-            return (<Paper key={index} sx={{ m: 5, p: 5, fontSize: '1.5em', color: '#2f3337', backgroundColor: '#f6f6f6', width: '450px', height: '300px', overflowY: 'auto' }} > {content}</Paper>)
-          })
+        </Box>
+        <Box className='text-panel-container'>
+          {elementStack[verticalTabValue] ?
+            elementStack[verticalTabValue].map((content, index) => {
+              return (<Paper key={index} sx={{ m: 5, p: 5, fontSize: '1.5em', color: '#2f3337', backgroundColor: '#f6f6f6', width: '80%', height: 'fit-content' }} > {content}</Paper>)
+            })
+            : <Typography component='h1'>No Content Text.</Typography>
           }
-        </div>
+        </Box>
       </>
     );
-  }
+  };
 
   const Links = () => {
     return (
-      <h1>Links</h1>
-    )
-  }
+      <Box sx={{ p: 5, display: 'flex', width: '100%', height: '100%', flexDirection: 'column' }}>
+        {
+          elementStack['A'] ?
+            elementStack['A'].map((url, index) => <Box key={index} sx={{ fontSize: '1.5em', m: 3, width: '60%' }}><a href={url} target='_blank'>{url}</a></Box>)
+            : <Typography component='h1'>No Link.</Typography>
+        }
+      </Box>
+    );
+  };
 
   const Images = () => {
     return (
-      <h1>Images</h1>
-    )
-  }
+      <Box sx={{ p: 5, display: 'flex', width: '100%', height: '100%', flexWrap: 'wrap' }}>
+        {
+          elementStack['IMG'] ?
+            elementStack['IMG'].map((imgInfo, index) => <Box key={index} sx={{ p: 2, m: 3, display: 'flex', width: '400px', height: '300px', flexDirection: 'column', justifyContent: 'space-around' }}><img src={imgInfo.src} width='100%' height='100%' /><h2>{imgInfo.alt}</h2></Box>)
+            : <Typography component='h1'>No Image.</Typography>
+        }
+      </Box>
+    );
+  };
 
   const Audios = () => {
     return (
-      <h1>Audios</h1>
-    )
-  }
+      <Box sx={{ p: 5, display: 'flex', width: '100%', height: '100%', flexWrap: 'wrap' }}>
+        {
+          elementStack['AUDIO'] ?
+            elementStack['AUDIO'].map((audioInfo, index) => <Box key={index} sx={{ p: 3, m: 3, display: 'flex', width: '300px', height: '200px', flexDirection: 'column', justifyContent: 'space-around' }}>
+              <audio controls>
+                <source src={audioInfo.src} type='audio/ogg' />
+                <source src={audioInfo.src} type='audio/mpeg' />
+              </audio>
+              <h2>{audioInfo.text}</h2>
+            </Box>)
+            : <Typography component='h1'>No Audio</Typography>
+        }
+      </Box>
+    );
+  };
 
   const Videos = () => {
     return (
-      <h1>Videos</h1>
-    )
-  }
-
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
+      <Box sx={{ p: 5, display: 'flex', width: '100%', height: '100%', flexWrap: 'wrap' }}>
+        {
+          elementStack['VIDEO'] ?
+            elementStack['VIDEO'].map((videoInfo, index) => <Box key={index} sx={{ p: 3, m: 3, display: 'flex', width: '300px', height: '200px', flexDirection: 'column', justifyContent: 'space-around' }}>
+              <video controls>
+                <source src={videoInfo.src} type='video/mp4' />
+                <source src={videoInfo.src} type='video/ogg' />
+              </video>
+              <h2>{videoInfo.text}</h2>
+            </Box>)
+            : <Typography component='h1'>No Audio</Typography>
+        }
+      </Box>
+    );
   };
 
   useEffect(() => {
-    const elements = clarifyElementList(localStorage.getItem('DOM_Analyzer_html_resource'));
-    let elementStackTemp = {};
-    if (elements) {
-      elements.forEach(element => {
-        switch (element.tagName) {
-          case 'A':
-            elementStackTemp[element.tagName] = elementStackTemp[element.tagName] ? [...elementStackTemp[element.tagName], element.getAttribute('href')] : [element.getAttribute('href')];
-            break;
-          case 'IMG':
-            elementStackTemp[element.tagName] = elementStackTemp[element.tagName] ? [...elementStackTemp[element.tagName], element.getAttribute('src')] : elementStackTemp[element.tagName] = [element.getAttribute('src')];
-            break;
-          case 'VIDEO' || 'AUDIO':
-            elementStackTemp[element.tagName] = elementStackTemp[element.tagName] ? [...elementStackTemp[element.tagName], element.$('source').getAttribute('src')] : [element.$('source').getAttribute('src')];
-            break;
-          default:
-            if (element.innerText) elementStackTemp[element.tagName] = elementStackTemp[element.tagName] ? [...elementStackTemp[element.tagName], element.innerText.trim()] : [element.innerText.trim()];
-        }
-      });
+    async function init() {
+      const elements = await clarifyElementList(localStorage.getItem('DOM_Analyzer_html_resource'));
+      let elementStackTemp = {};
+      if (elements) {
+        elements.forEach(element => {
+          switch (element.tagName) {
+            case 'A':
+              elementStackTemp[element.tagName] = elementStackTemp[element.tagName] ? [...elementStackTemp[element.tagName], element.getAttribute('href')] : [element.getAttribute('href')];
+              break;
+            case 'IMG':
+              elementStackTemp[element.tagName] = elementStackTemp[element.tagName] ? [...elementStackTemp[element.tagName], { src: element.getAttribute('src'), alt: element.getAttribute('src') }] : elementStackTemp[element.tagName] = [{ src: element.getAttribute('src'), alt: element.getAttribute('src') }];
+              break;
+            case 'AUDIO':
+              if (element.childElementCount)
+                elementStackTemp[element.tagName] = elementStackTemp[element.tagName] ? [...elementStackTemp[element.tagName], { src: element.firstElementChild.getAttribute('src'), text: element.outerText }] : [{ src: element.firstElementChild.getAttribute('src'), text: element.outerText }];
+              break;
+            case 'VIDEO':
+              if (element.childElementCount) {
+                chrome.tabs.query({ active: true }, tabs => {
+                  elementStackTemp[element.tagName] = elementStackTemp[element.tagName] ? [...elementStackTemp[element.tagName], { src: element.firstElementChild.getAttribute('src'), text: element.outerText }] : [{ src: element.firstElementChild.getAttribute('src'), text: element.outerText }];
+                });
+              }
+              break;
+            default:
+              if (element.innerText) elementStackTemp[element.tagName] = elementStackTemp[element.tagName] ? [...elementStackTemp[element.tagName], element.innerText.trim()] : [element.innerText.trim()];
+          }
+        });
+      }
+      setElementStack(elementStackTemp);
+      localStorage.removeItem('DOM_Analyzer_html_resource');
     }
-    setElementStack(elementStackTemp);
-    localStorage.removeItem('DOM_Analyzer_html_resource');
+    init();
   }, []);
 
   return (
@@ -141,18 +186,18 @@ const Dashboard = () => {
           ></Avatar>
         </Toolbar>
       </AppBar>
-      <div className='main-container'>
+      <Box className='main-container'>
         <Tabs
           sx={{ width: '100%' }}
           value={tabValue}
-          onChange={handleTabChange}
+          onChange={(e, newValue) => { setTabValue(newValue); }}
           variant='standard'
           scrollButtons
           allowScrollButtonsMobile
         >
           {tabCategory.map((category, index) => <Tab key={index} value={index} label={category} />)}
         </Tabs>
-        <div className='tab-container flex-stretch'>
+        <Box className='tab-container flex-stretch'>
           {
             tabValue === 0 ? <Texts /> :
               tabValue === 1 ? <Links /> :
@@ -160,8 +205,8 @@ const Dashboard = () => {
                   tabValue === 3 ? <Audios /> :
                     <Videos />
           }
-        </div>
-      </div>
+        </Box>
+      </Box>
     </div >
   );
 };
